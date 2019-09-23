@@ -1,0 +1,52 @@
+<html>
+<head>
+</head>
+<body>
+<p>Status :<span class="Status"></span></p>
+<script src="jquery-3.4.1.js"></script>
+<script src="plotly.js"></script>
+<script>
+var valx=0;
+var valy=0;
+(function(){
+    var state=$('.Status'),
+    poll=function(){
+        $.ajax({
+            url:'state.json',
+            dataType:'json',
+            type:'get',
+            success:function(data){
+                state.text('Offline!');
+                console.log(data.live);
+                if(data.live){
+                    valx=data.x;
+                    valy=data.y;
+                    z="Value of X : "+ data.x + " Value of Y : " + data.y;
+                    state.html(z);
+                    clearInterval(pollInterval);
+                }
+            },
+            error:function(){
+                console.log('Error!!');
+            }
+        });
+    },
+    pollInterval=setInterval(function(){
+        poll();
+    },2000);
+    poll();
+})();
+$(document).ready(function(){
+    console.log("this is the val "+ valx);
+    TESTER = document.getElementById('tester');
+	Plotly.plot( TESTER, [{
+	x: valx,
+	y: valy }], {
+	margin: { t: 0 } } );
+});
+
+</script>
+<div id="tester" style="width:600px;height:250px;"></div>
+<div id="chart"></div>
+</body>
+</html>
